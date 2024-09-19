@@ -1,0 +1,76 @@
+diff --git a/config.def.h b/config.def.h
+index 1c0b587..91f8123 100644
+--- a/config.def.h
++++ b/config.def.h
+@@ -84,6 +84,7 @@ static Key keys[] = {
+ 	{ MODKEY,                       XK_period, focusmon,       {.i = +1 } },
+ 	{ MODKEY|ShiftMask,             XK_comma,  tagmon,         {.i = -1 } },
+ 	{ MODKEY|ShiftMask,             XK_period, tagmon,         {.i = +1 } },
++	{ MODKEY,                       XK_s,      swapfocus,      {0} },
+ 	TAGKEYS(                        XK_1,                      0)
+ 	TAGKEYS(                        XK_2,                      1)
+ 	TAGKEYS(                        XK_3,                      2)
+diff --git a/dwm.c b/dwm.c
+index 4465af1..b8a2f6e 100644
+--- a/dwm.c
++++ b/dwm.c
+@@ -49,6 +49,7 @@
+ #define TAGMASK                 ((1 << LENGTH(tags)) - 1)
+ #define TEXTW(X)                (drw_fontset_getwidth(drw, (X)) + lrpad)
+ 
++#define OPAQUE                  0xffU
+ #define WIDTH(X)                ((X)->w + 2 * (X)->bw)
+ #define HEIGHT(X)               ((X)->h + 2 * (X)->bw)
+ #define TAGSLENGTH              (LENGTH(tags))
+@@ -211,6 +212,7 @@ static void spawn(const Arg *arg);
+ static void tag(const Arg *arg);
+ static void tagmon(const Arg *arg);
+ static void tile(Monitor *m);
++static void swapfocus(const Arg *arg);
+ static void togglebar(const Arg *arg);
+ static void togglefloating(const Arg *arg);
+ static void toggletag(const Arg *arg);
+@@ -236,6 +238,7 @@ static void zoom(const Arg *arg);
+ /* variables */
+ static const char broken[] = "broken";
+ static char stext[256];
++static Client *prevclient = NULL;
+ static int screen;
+ static int sw, sh;           /* X display screen geometry width, height */
+ static int bh, blw = 0;      /* bar geometry */
+@@ -726,6 +729,8 @@ focusmon(const Arg *arg)
+ void
+ focusstack(const Arg *arg)
+ {
++	if (prevclient == NULL)
++		prevclient = selmon->sel;
+ 	Client *c = NULL, *i;
+ 
+ 	if (!selmon->sel || (selmon->sel->isfullscreen && lockfullscreen))
+@@ -742,6 +747,7 @@ focusstack(const Arg *arg)
+ 			c = i;
+ 	if (!c)
+ 		return;
++	prevclient = selmon->sel;
+ 	focus(c);
+ 	restack(selmon);
+ }
+@@ -1712,6 +1718,18 @@ tile(Monitor *m)
+ 		}
+ }
+ 
++void
++swapfocus(const Arg *arg)
++{
++	if (!selmon->sel || !prevclient)
++		return;
++	Client *temp = selmon->sel;
++	selmon->sel = prevclient;
++	prevclient = temp;
++	focus(selmon->sel);
++	restack(selmon);
++}
++
+ void
+ togglebar(const Arg *arg)
+ {
