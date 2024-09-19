@@ -111,7 +111,6 @@ typedef struct {
 	void (*arrange)(Monitor *);
 } Layout;
 
-typedef struct Pertag Pertag;
 struct Monitor {
 	char ltsymbol[16];
 	float mfact;
@@ -131,23 +130,8 @@ struct Monitor {
 	Client *stack;
 	Monitor *next;
 	Window barwin;
-	Pertag *pertag;
 	const Layout *lt[2];
 };
-
-struct Pertag {
-	unsigned int curtag, prevtag; /* current and previous tag */
-	int nmasters[LENGTH(tags) + 1]; /* number of windows in master area */
-	float mfacts[LENGTH(tags) + 1]; /* mfacts per tag */
-	unsigned int sellts[LENGTH(tags) + 1]; /* selected layouts */
-	const Layout *ltidxs[LENGTH(tags) + 1][2]; /* matrix of tags and layouts indexes  */
-	int showbars[LENGTH(tags) + 1]; /* display bar for the current tag */
-};
-
-/* Pertag Function Prototypes */
-static void pertagview(const Arg *arg);
-static void pertagtogglerview(const Arg *arg);
-static int pertaginc(int i);
 
 typedef struct {
 	const char *class;
