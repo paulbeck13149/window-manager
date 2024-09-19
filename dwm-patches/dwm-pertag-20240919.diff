@@ -1,8 +1,8 @@
 diff --git a/dwm.c b/dwm.c
-index e639b9c..f8a2c87 100644
+index 4465af1..a5ce993 100644
 --- a/dwm.c
 +++ b/dwm.c
-@@ -118,6 +118,13 @@ typedef struct {
+@@ -111,6 +111,15 @@ typedef struct {
  	void (*arrange)(Monitor *);
  } Layout;
  
@@ -19,7 +19,7 @@ index e639b9c..f8a2c87 100644
  struct Monitor {
  	char ltsymbol[16];
  	float mfact;
-@@ -138,6 +145,7 @@ struct Monitor {
+@@ -131,6 +140,7 @@ struct Monitor {
  	Client *stack;
  	Monitor *next;
  	Window barwin;
@@ -27,7 +27,7 @@ index e639b9c..f8a2c87 100644
  	const Layout *lt[2];
  };
  
-@@ -280,6 +288,7 @@ static void (*handler[LASTEvent]) (XEvent *) = {
+@@ -272,6 +282,7 @@ static void (*handler[LASTEvent]) (XEvent *) = {
  };
  
  /* variables */
@@ -35,7 +35,7 @@ index e639b9c..f8a2c87 100644
  static const char broken[] = "broken";
  static char stext[256];
  static int screen;
-@@ -644,6 +653,20 @@ createmon(void)
+@@ -642,6 +653,20 @@ createmon(void)
  	m->showbar = showbar;
  	m->topbar = topbar;
  	m->gappx = gappx;
@@ -56,7 +56,7 @@ index e639b9c..f8a2c87 100644
  	m->lt[0] = &layouts[0];
  	m->lt[1] = &layouts[1 % LENGTH(layouts)];
  	strncpy(m->ltsymbol, layouts[0].symbol, sizeof m->ltsymbol);
-@@ -975,7 +998,7 @@ grabkeys(void)
+@@ -969,7 +994,7 @@ grabkeys(void)
  void
  incnmaster(const Arg *arg)
  {
@@ -65,7 +65,7 @@ index e639b9c..f8a2c87 100644
  	arrange(selmon);
  }
  
-@@ -1511,11 +1534,11 @@ setfullscreen(Client *c, int fullscreen)
+@@ -1511,11 +1536,11 @@ setfullscreen(Client *c, int fullscreen)
  void
  setgaps(const Arg *arg)
  {
@@ -81,7 +81,7 @@ index e639b9c..f8a2c87 100644
  }
  
  void
-@@ -1523,9 +1546,9 @@ setlayout(const Arg *arg)
+@@ -1523,9 +1548,9 @@ setlayout(const Arg *arg)
  {
  	if (!arg || !arg->v || arg->v != selmon->lt[selmon->sellt])
 -		selmon->sellt ^= 1;
@@ -92,7 +92,7 @@ index e639b9c..f8a2c87 100644
  	strncpy(selmon->ltsymbol, selmon->lt[selmon->sellt]->symbol, sizeof selmon->ltsymbol);
  	if (selmon->sel)
  		arrange(selmon);
-@@ -1544,7 +1567,7 @@ setmfact(const Arg *arg)
+@@ -1544,7 +1569,7 @@ setmfact(const Arg *arg)
  	f = arg->f < 1.0 ? arg->f + selmon->mfact : arg->f - 1.0;
  	if (f < 0.1 || f > 0.9)
  		return;
@@ -101,7 +101,7 @@ index e639b9c..f8a2c87 100644
  	arrange(selmon);
  }
  
-@@ -1702,9 +1725,38 @@ tag(const Arg *arg)
+@@ -1702,9 +1727,38 @@ tag(const Arg *arg)
  		selmon->sel->tags = arg->ui & TAGMASK;
  		focus(NULL);
  		arrange(selmon);
