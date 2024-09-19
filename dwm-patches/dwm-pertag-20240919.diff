@@ -8,7 +8,7 @@
  struct Monitor {
  	char ltsymbol[16];
  	float mfact;
-@@ -128,9 +129,24 @@ struct Monitor {
+@@ -127,9 +128,24 @@ struct Monitor {
  	Client *stack;
  	Monitor *next;
  	Window barwin;
@@ -33,7 +33,7 @@
  typedef struct {
  	const char *class;
  	const char *instance;
-@@ -638,6 +654,7 @@ createmon(void)
+@@ -639,6 +655,7 @@ createmon(void)
  createmon(void)
  {
  	Monitor *m;
@@ -62,7 +62,7 @@
  	return m;
  }
  
-@@ -1510,13 +1541,15 @@ void
+@@ -1511,13 +1542,15 @@ void
  setlayout(const Arg *arg)
  {
  	if (!arg || !arg->v || arg->v != selmon->lt[selmon->sellt])
@@ -80,7 +80,7 @@
  		drawbar(selmon);
  }
  
-@@ -1524,11 +1557,12 @@ setlayout(const Arg *arg)
+@@ -1525,11 +1558,12 @@ setlayout(const Arg *arg)
  void
  setmfact(const Arg *arg)
  {
@@ -95,7 +95,7 @@
  	if (f < 0.05 || f > 0.95)
  		return;
  	selmon->mfact = f;
-@@ -1686,7 +1720,8 @@ tagmon(const Arg *arg)
+@@ -1687,7 +1721,8 @@ tagmon(const Arg *arg)
  void
  tile(Monitor *m)
  {
@@ -105,7 +105,7 @@
  	Client *c;
  
  	for (n = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), n++);
-@@ -1694,21 +1729,21 @@ tile(Monitor *m)
+@@ -1695,21 +1730,21 @@ tile(Monitor *m)
  		return;
  
  	if (n > m->nmaster)
@@ -139,7 +139,7 @@
  }
  
  void
-@@ -1892,11 +1927,97 @@ updatewmhints(Client *c)
+@@ -1893,11 +1928,97 @@ updatewmhints(Client *c)
  void
  view(const Arg *arg)
  {
