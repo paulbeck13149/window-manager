@@ -8,7 +8,7 @@
  struct Monitor {
  	char ltsymbol[16];
  	float mfact;
-@@ -127,9 +128,24 @@ struct Monitor {
+@@ -128,9 +129,24 @@ struct Monitor {
  	Client *stack;
  	Monitor *next;
  	Window barwin;
