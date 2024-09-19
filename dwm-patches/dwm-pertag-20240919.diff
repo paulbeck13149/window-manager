@@ -1,24 +1,22 @@
-diff --git a/dwm.c b/dwm.c
-index 5808f1e..d52f0c0 100644
 --- a/dwm.c
 +++ b/dwm.c
-@@ -119,12 +119,14 @@ struct Monitor {
+@@ -115,6 +115,7 @@ struct Monitor {
+ 	float mfact;
+ 	int nmaster;
+ 	int num;
++	int gappx;            /* gaps between windows */
  	int by;               /* bar geometry */
  	int mx, my, mw, mh;   /* screen size */
  	int wx, wy, ww, wh;   /* window area  */
-+	int gappx;            /* gaps between windows */
-+	unsigned int pertag;
- 	unsigned int seltags;
- 	unsigned int sellt;
+@@ -123,6 +124,7 @@ struct Monitor {
  	unsigned int tagset[2];
  	int showbar;
  	int topbar;
--	Client *clients;
-+	Client *clients;
++	unsigned int pertag;
+ 	Client *clients;
  	Client *sel;
  	Client *stack;
- 	Monitor *next;
-@@ -211,6 +213,28 @@ static int xerror(Display *dpy, XErrorEvent *ee);
+@@ -211,6 +213,29 @@ static int xerror(Display *dpy, XErrorEvent *ee);
  static int xerrordummy(Display *dpy, XErrorEvent *ee);
  static int xerrorstart(Display *dpy, XErrorEvent *ee);
  
@@ -30,12 +28,14 @@ index 5808f1e..d52f0c0 100644
 +	int topbar;
 +	int gappx;
 +} Pertag;
++
 +static Pertag *pertagget(Monitor *m, unsigned int tag);
 +
 +#include "fibonacci.c"
 +
 +static Pertag *
-+pertagget(Monitor *m, unsigned int tag) {
++pertagget(Monitor *m, unsigned int tag)
++{
 +	Pertag *p = m->pertag;
 +	if (!p) {
 +		p = m->pertag = ecalloc(LENGTH(tags), sizeof(Pertag));
@@ -46,7 +46,7 @@ index 5808f1e..d52f0c0 100644
  /* variables */
  static const char broken[] = "broken";
  static char stext[256];
-@@ -641,8 +665,20 @@ createmon(void)
+@@ -638,8 +663,21 @@ createmon(void)
  	m->nmaster = nmaster;
  	m->showbar = showbar;
  	m->topbar = topbar;
@@ -68,7 +68,7 @@ index 5808f1e..d52f0c0 100644
  	strncpy(m->ltsymbol, layouts[0].symbol, sizeof m->ltsymbol);
  	return m;
  }
-@@ -1512,8 +1548,10 @@ setlayout(const Arg *arg)
+@@ -1508,8 +1546,10 @@ setlayout(const Arg *arg)
  {
  	if (!arg || !arg->v || arg->v != selmon->lt[selmon->sellt])
  		selmon->sellt ^= 1;
@@ -81,12 +81,10 @@ index 5808f1e..d52f0c0 100644
  	strncpy(selmon->ltsymbol, selmon->lt[selmon->sellt]->symbol, sizeof selmon->ltsymbol);
  	if (selmon->sel)
  		arrange(selmon);
-@@ -1524,13 +1562,15 @@ setlayout(const Arg *arg)
- void
+@@ -1521,12 +1561,14 @@ void
  setmfact(const Arg *arg)
  {
--	float f;
-+	float f;
+ 	float f;
 +	Pertag *p = pertagget(selmon, selmon->pertag);
  
  	if (!arg || !selmon->lt[selmon->sellt]->arrange)
@@ -99,26 +97,23 @@ index 5808f1e..d52f0c0 100644
  	selmon->mfact = f;
  	arrange(selmon);
  }
-@@ -1686,8 +1726,9 @@ tagmon(const Arg *arg)
+@@ -1683,8 +1725,9 @@ tagmon(const Arg *arg)
  void
  tile(Monitor *m)
  {
 -	unsigned int i, n, h, mw, my, ty;
--	Client *c;
+ 	Client *c;
 +	unsigned int i, n, h, mw, my, ty;
 +	Pertag *p = pertagget(m, m->pertag);
-+	Client *c;
  
  	for (n = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), n++);
  	if (n == 0)
-@@ -1695,18 +1736,18 @@ tile(Monitor *m)
- 
+@@ -1693,18 +1736,18 @@ tile(Monitor *m)
  	if (n > m->nmaster)
  		mw = m->nmaster ? m->ww * m->mfact : 0;
--	else
+ 	else
 -		mw = m->ww;
 -	for (i = my = ty = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), i++)
-+	else
 +		mw = m->ww - p->gappx;
 +	for (i = 0, my = ty = p->gappx, c = nexttiled(m->clients); c; c = nexttiled(c->next), i++)
  		if (i < m->nmaster) {
