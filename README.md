@@ -1,2 +1,1 @@
-currently the patches i have made for dwm
-pertag isn't working right now
+README.md is currently intended to be empty.
